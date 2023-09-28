@@ -143,6 +143,7 @@ def ImpBDDesc():
         lstbxPreferencias.insert(END, itemPreferencia.Descricao)
 
     print(dfPreferencias.items)
+    print(dfPreferencias)
 
 
 btnMensagem = Button(frmJanela, text="mensagem", fg="black", bg="gray", width=25, height=1, command=Mensagem)
