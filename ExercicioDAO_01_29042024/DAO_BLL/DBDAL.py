@@ -35,6 +35,7 @@ class Conexao:
     def fecharConexao():
         if Conexao._conexao is not None:
             #usando o exec para escrever o código usando string.
+            #pyodbc.Connection(Conexao._conexao).close()
             exec("Conexao._conexao.close()",globals(),{})
             #linha de código criada para testar se a conexão fechou
             #exec("Conexao._conexao.cursor().execute('SELECT Descricao FROM Preferencias_3')", globals(), {})
