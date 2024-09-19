@@ -1,11 +1,14 @@
 import pyodbc   # importa a biblioteca pyodbc
 import pandas as pdPreferencias     # importa a biblioteca pandas com o nome de pdPreferencias
 from io import StringIO
-from DAO_BLL.DBDAL import Conexao
+from DAO.DB_DAL import Conexao
+from MODEL.preferenciasVO import PreferenciasVO
 
 class PreferenciasDAO(Conexao):
     def __init__(self):
         super().__init__()
+
+
     def banco_conectado(self):
         try:
             lista = []
@@ -67,7 +70,7 @@ class PreferenciasDAO(Conexao):
             return ex
 
 
-    def ConsultarBD(self, parPreferenciaDescricao=None):
+    def ConsultarBD(self, objPreferenciasVO):
         try:
             objConexao = self.conexao
             objLeitorBD = objConexao.cursor()
@@ -79,25 +82,27 @@ class PreferenciasDAO(Conexao):
             strSql.write(" FROM")
             strSql.write(" Preferencias_3")
 
-            if parPreferenciaDescricao == None or parPreferenciaDescricao == "":
+            if objPreferenciasVO.descricao is None or objPreferenciasVO.descricao == "":
                 strSql.write(" ORDER BY ID")
                 objLeitorBD.execute(strSql.getvalue())
             else:
                 strSql.write(" WHERE")
                 strSql.write(" Descricao = ?")
                 strSql.write(" ORDER BY ID")
-                objLeitorBD.execute(strSql.getvalue(), parPreferenciaDescricao)
+                objLeitorBD.execute(strSql.getvalue(), objPreferenciasVO.descricao)
 
             records = objLeitorBD.fetchall()
 
-            self.fecharConexao()
-
             return records
         except Exception as ex:
-            return ex
+            raise ex
+
+        finally:
+            self.fecharConexao()
 
 
-    def InserirBD(self, descricao):
+
+    def InserirBD(self, objPreferenciasVO):
         try:
             objConexao = self.conexao
             objLeitorBD = objConexao.cursor()
@@ -111,7 +116,7 @@ class PreferenciasDAO(Conexao):
             strSql.write(" ?")
             strSql.write(" )")
 
-            objLeitorBD.execute(strSql.getvalue(), descricao)
+            objLeitorBD.execute(strSql.getvalue(), objPreferenciasVO.descricao)
 
             objConexao.commit()
 
@@ -123,7 +128,7 @@ class PreferenciasDAO(Conexao):
             self.fecharConexao()
 
 
-    def ExcluirBD(self, idItemDaLinhaSelecionada):
+    def ExcluirBD(self, objPreferenciasVO):
         try:
             objConexao = self.conexao
             objLeitorBD = objConexao.cursor()
@@ -135,7 +140,7 @@ class PreferenciasDAO(Conexao):
             strSql.write(" WHERE")
             strSql.write(" ID = ?")
 
-            objLeitorBD.execute(strSql.getvalue(), idItemDaLinhaSelecionada)
+            objLeitorBD.execute(strSql.getvalue(), objPreferenciasVO.id)
 
             objLeitorBD.commit()
 
@@ -147,7 +152,7 @@ class PreferenciasDAO(Conexao):
             self.fecharConexao()
 
 
-    def AlterarBD(self, idItemDaLinhaSelecionada, descricao):
+    def AlterarBD(self, objPreferenciasVO):
         try:
             objConexao = self.conexao
             objLeitorBD = objConexao.cursor()
@@ -160,7 +165,7 @@ class PreferenciasDAO(Conexao):
             strSql.write(" WHERE")
             strSql.write(" ID = ?")
 
-            objLeitorBD.execute(strSql.getvalue(), (descricao, idItemDaLinhaSelecionada))
+            objLeitorBD.execute(strSql.getvalue(), (objPreferenciasVO.descricao, objPreferenciasVO.id))
 
             objLeitorBD.commit()
 
